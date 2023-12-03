@@ -54,6 +54,7 @@ const generateTable = (table, data) => {
 };
 
 const movieCount = (movie) => {
+  movie = movie.toLowerCase();
   const index = movieHistory.findIndex((item) => item.movie === movie);
   if (index !== -1) {
     movieHistory[index].count++;
@@ -66,7 +67,23 @@ const clearMovies = () => {
   // To delete all children of the <ul></ul> (meaning all <li>'s)..we can wipe out the <ul>'s innerHTML
   myMovieList.innerHTML = "";
 };
+const filterMovie = () => {
+  const filteredInput = document.getElementById("filter");
+  filteredInput.addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    const movies = Array.from(myMovieList.getElementsByTagName("li"));
 
+    movies.forEach((movie) => {
+      const title = movie.textContent.toLowerCase();
+      if (title.includes(searchTerm)) {
+        movie.style.display = "block";
+      } else {
+        movie.style.display = "none";
+      }
+    });
+  });
+};
+filterMovie();
 // This function is executed when the user clicks [ADD MOVIE] button.
 const addMovie = () => {
   // Step 1: Get value of input
@@ -93,5 +110,4 @@ const addMovie = () => {
   // Step 6: Call the clearInput function to clear the input field
   clearInput();
 };
-tableBodyForm.innerHTML = "";
 generateTable(tableBodyForm, movieHistory);
