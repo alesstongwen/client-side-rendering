@@ -1,8 +1,8 @@
 // Add DOM selectors to target input and UL movie list
 const inp = document.querySelector("input");
 const myMovieList = document.querySelector("ul");
-const movieHistoryContainer = document.getElementById("tableContainer");
-let movieHistory = [];
+
+let movieHistory = JSON.parse(localStorage.getItem("movieHistory")) || [];
 
 const movieHistoryCard = document.getElementById("movieHistoryCard");
 
@@ -11,6 +11,7 @@ const tableContainer = document.createElement("div");
 tableContainer.id = "tableContainer";
 const table = document.createElement("table");
 table.className = "table";
+table.id = "movieTable";
 const tableHead = document.createElement("thead");
 const tableHeadRow = document.createElement("tr");
 ["Movie Name", "Watched Count"].forEach((headerText) => {
@@ -20,14 +21,14 @@ const tableHeadRow = document.createElement("tr");
 });
 tableHead.appendChild(tableHeadRow);
 const tableBody = document.createElement("tbody");
-tableBody.id = "movieHistoryTable";
+tableBody.id = "tableBody";
 table.appendChild(tableHead);
 table.appendChild(tableBody);
 tableContainer.appendChild(table);
 
 // Append the table to the movie history card
 movieHistoryCard.appendChild(tableContainer);
-
+const tableBodyForm = document.getElementById("tableBody");
 // Example of a simple function that clears the input after a user types something in
 const clearInput = () => (inp.value = "");
 
@@ -39,16 +40,11 @@ const validateForm = (userInput) => {
   return true;
 };
 
-// Call the function to create the movie history table
-createMovieHistoryTable();
-
-const movieHistoryContent = () => {};
-
 const generateTable = (table, data) => {
   const rows = data.map((element) => {
     const row = table.insertRow();
     Object.values(element).forEach((value) => {
-      const cell = row.inserCell();
+      const cell = row.insertCell();
       const text = document.createTextNode(value);
       cell.appendChild(text);
     });
@@ -64,8 +60,7 @@ const movieCount = (movie) => {
   } else {
     movieHistory.push({ movie, count: 1 });
   }
-  movieHistoryContainer.innerHTML = "";
-  generateTable(movieHistoryContainer, movieHistory);
+  localStorage.setItem("movieHistory", JSON.stringify(movieHistory));
 };
 const clearMovies = () => {
   // To delete all children of the <ul></ul> (meaning all <li>'s)..we can wipe out the <ul>'s innerHTML
@@ -93,6 +88,10 @@ const addMovie = () => {
   myMovieList.appendChild(li);
 
   movieCount(userTypedText);
+  tableBodyForm.innerHTML = "";
+  generateTable(tableBodyForm, movieHistory);
   // Step 6: Call the clearInput function to clear the input field
   clearInput();
 };
+tableBodyForm.innerHTML = "";
+generateTable(tableBodyForm, movieHistory);
